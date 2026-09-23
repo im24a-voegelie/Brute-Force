@@ -1,0 +1,4 @@
+# Alle Angriffe und Verteidigungen nutzen ausschliesslich die Python-Standardbibliothek
+# (hashlib, itertools, multiprocessing, argparse, json, csv, logging, time).
+# ruff wird nur fuer das Linting in Schritt 10 (Code-Qualitaet) benoetigt.
+ruff
