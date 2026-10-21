@@ -31,5 +31,25 @@ demo/       CLI, um Angriff + Verteidigung kombiniert auszuprobieren
 ```
 
 Details zu jeder Komponente stehen im Architektur-Abschnitt von
-[Plan.md](Plan.md). Sobald die einzelnen Skripte umgesetzt sind, wird hier
-pro Skript ein Ausführungsbeispiel ergänzt.
+[Plan.md](Plan.md). Weitere Ausführungsbeispiele werden ergänzt, sobald die
+übrigen Skripte umgesetzt sind.
+
+## Mittlere Angriffe (2.2)
+
+Beide Skripte verwenden `common/demo_target.py` und greifen damit denselben
+simulierten In-Memory-Account (`demo_user`) wie die anderen Angriffe an. Sie
+verbinden sich nicht mit einem Netzwerkdienst. Das Passwort `Gtm0` ist für
+die Demo absichtlich kurz gehalten.
+
+```bash
+python -m attacks.dictionary_attack
+python -m attacks.poly_alphabet_attack
+```
+
+Der Dictionary-Angriff prüft die Beispiel-Wortliste in `data/wordlist.txt`
+sowie Schreibweisen und Varianten mit dem fiktiven Namen/Geburtsjahr aus
+`data/victim_profile.json`. Der Poly-Alphabet-Angriff kombiniert Buchstaben
+und Ziffern aus einem kleinen Zeichensatz, der das Demo-Passwort enthält. Die
+Demos halten Wortliste, Zeichensatz und Passwortlänge absichtlich klein,
+damit sie schnell und nachvollziehbar laufen; grössere Suchräume wachsen sehr
+schnell.
