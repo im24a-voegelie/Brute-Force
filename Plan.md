@@ -31,7 +31,8 @@ Brute-Force/
 ├── .gitignore
 ├── common/
 │   ├── account_store.py           # simuliertes Login-System: User anlegen, login(username, password) -> bool
-│   └── hashing.py                 # Hash-Hilfsfunktionen (SHA-256, bewusst ohne Salt für die Übung)
+│   ├── hashing.py                 # Hash-Hilfsfunktionen (SHA-256, bewusst ohne Salt für die Übung)
+│   └── demo_target.py             # EIN gemeinsamer Demo-Account, den alle Angriffe angreifen
 ├── attacks/
 │   ├── mono_alphabet_attack.py    # 2.1
 │   ├── dictionary_attack.py       # 2.2a
