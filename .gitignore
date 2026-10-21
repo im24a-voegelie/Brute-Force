@@ -15,3 +15,6 @@ Thumbs.db
 
 # Logs, die von defenses/logging_defense.py erzeugt werden
 *.log
+
+# Generierte Rainbow-Table (gross, wird per scripts/build_rainbow_table.py erzeugt)
+data/rainbow_table.csv
