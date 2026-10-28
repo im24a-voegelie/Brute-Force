@@ -38,7 +38,7 @@ Details zu jeder Komponente stehen im Architektur-Abschnitt von
 
 Beide Skripte verwenden `common/demo_target.py` und greifen damit denselben
 simulierten In-Memory-Account (`demo_user`) wie die anderen Angriffe an. Sie
-verbinden sich nicht mit einem Netzwerkdienst. Das Passwort `!` ist für
+verbinden sich nicht mit einem Netzwerkdienst. Das Passwort `hans` ist für
 die Demo absichtlich kurz gehalten.
 
 ```bash
@@ -76,4 +76,24 @@ protected_login = apply_counter_limit(store.login)
 result = run_poly_alphabet_attack(
     store, username, login_fn=protected_login
 )
+```
+
+## Komplexe Verteidigung (3.3)
+
+Die Logging-Verteidigung protokolliert fehlgeschlagene Logins mit UTC-Zeit und
+Benutzername in `logs/login_attempts.csv`. Bei mindestens drei Fehlversuchen
+desselben Benutzers innerhalb von 60 Sekunden wird ein Alarm ausgegeben und
+als Ereignis protokolliert. Diese Variante meldet auffällige Aktivität, sie
+sperrt den Benutzer nicht.
+
+```powershell
+python -m defenses.logging_defense
+```
+
+Zum Testen wird dreimal absichtlich ein falsches Passwort gesendet. Danach
+zeigt die Demo, dass der Alarm ausgelöst wurde und das richtige Passwort
+trotzdem akzeptiert wird. Eine eigene Protokolldatei kannst du angeben:
+
+```powershell
+python -m defenses.logging_defense --log-file logs\logging_test.csv
 ```
