@@ -186,3 +186,17 @@ Alle Angriffs- und Verteidigungs-Parameter zeigt:
 ```bash
 python -m demo.run_demo --help
 ```
+
+## Aufteilung
+
+| Teil | Wer |
+| --- | --- |
+| Planung | Gemeinsam |
+| Setup | Ennio |
+| Einfacher Angriff (2.1) | Ennio |
+| Mittlere Angriffe (2.2) | Dario |
+| Komplexe Angriffe (2.3) | Ennio |
+| Einfache Verteidigungen (3.1) | Dario |
+| Mittlere Verteidigungen (3.2) | Ennio |
+| Komplexe Verteidigung (3.3) | Dario |
+| Linting & README-Review | Gemeinsam |
