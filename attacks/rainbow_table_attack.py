@@ -45,7 +45,9 @@ def rainbow_table_attack(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Rainbow-Table-Angriff (2.3a)")
     parser.add_argument(
-        "--table", type=Path, default=DEFAULT_TABLE,
+        "--table",
+        type=Path,
+        default=DEFAULT_TABLE,
         help="Pfad zur vorberechneten Lookup-Datei",
     )
     args = parser.parse_args()
@@ -59,9 +61,13 @@ def main() -> None:
     duration = time.perf_counter() - start
 
     if found is not None:
-        print(f"Passwort gefunden: '{found}' per Lookup in {duration:.6f}s (kein Hash berechnet)")
+        print(
+            f"Passwort gefunden: '{found}' per Lookup in {duration:.6f}s (kein Hash berechnet)"
+        )
     else:
-        print(f"Passwort nicht in der Lookup-Tabelle enthalten (gesucht in {duration:.6f}s)")
+        print(
+            f"Passwort nicht in der Lookup-Tabelle enthalten (gesucht in {duration:.6f}s)"
+        )
 
 
 if __name__ == "__main__":

@@ -105,29 +105,51 @@ def parallel_bruteforce_attack(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Parallelisierter Brute-Force-Angriff (2.3b)")
+    parser = argparse.ArgumentParser(
+        description="Parallelisierter Brute-Force-Angriff (2.3b)"
+    )
     parser.add_argument(
-        "--charset", nargs="+", choices=sorted(CHARSETS), default=["lower"],
+        "--charset",
+        nargs="+",
+        choices=sorted(CHARSETS),
+        default=["lower"],
         help="Ein oder mehrere Zeichensaetze, die kombiniert werden "
         "(z.B. '--charset lower digits' fuer einen Poly-Alphabet-Suchraum)",
     )
-    parser.add_argument("--max-length", type=int, default=4, help="Maximale Passwortlaenge, die probiert wird")
-    parser.add_argument("--processes", type=int, default=4, help="Anzahl paralleler Instanzen/Prozesse")
+    parser.add_argument(
+        "--max-length",
+        type=int,
+        default=4,
+        help="Maximale Passwortlaenge, die probiert wird",
+    )
+    parser.add_argument(
+        "--processes", type=int, default=4, help="Anzahl paralleler Instanzen/Prozesse"
+    )
     args = parser.parse_args()
 
     charset = "".join(dict.fromkeys("".join(CHARSETS[name] for name in args.charset)))
     store, username = build_demo_target()
-    print(f"Zeichensatz: {'+'.join(args.charset)}, max. Laenge: {args.max_length}, Prozesse: {args.processes}")
-    print(f"Ziel-Passwort (nur zur Kontrolle, normalerweise unbekannt): {DEMO_PASSWORD}")
+    print(
+        f"Zeichensatz: {'+'.join(args.charset)}, max. Laenge: {args.max_length}, Prozesse: {args.processes}"
+    )
+    print(
+        f"Ziel-Passwort (nur zur Kontrolle, normalerweise unbekannt): {DEMO_PASSWORD}"
+    )
 
     start = time.perf_counter()
-    found, attempts = parallel_bruteforce_attack(store, username, charset, args.max_length, args.processes)
+    found, attempts = parallel_bruteforce_attack(
+        store, username, charset, args.max_length, args.processes
+    )
     duration = time.perf_counter() - start
 
     if found is not None:
-        print(f"Passwort gefunden: '{found}' nach insgesamt {attempts} Versuchen in {duration:.3f}s")
+        print(
+            f"Passwort gefunden: '{found}' nach insgesamt {attempts} Versuchen in {duration:.3f}s"
+        )
     else:
-        print(f"Passwort nicht gefunden nach insgesamt {attempts} Versuchen in {duration:.3f}s")
+        print(
+            f"Passwort nicht gefunden nach insgesamt {attempts} Versuchen in {duration:.3f}s"
+        )
 
 
 if __name__ == "__main__":

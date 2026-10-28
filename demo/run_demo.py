@@ -34,7 +34,11 @@ from attacks.mono_alphabet_attack import mono_alphabet_attack
 from attacks.parallel_bruteforce_attack import CHARSETS as PARALLEL_CHARSETS
 from attacks.parallel_bruteforce_attack import parallel_bruteforce_attack
 from attacks.poly_alphabet_attack import run_poly_alphabet_attack
-from attacks.rainbow_table_attack import DEFAULT_TABLE, load_rainbow_table, rainbow_table_attack
+from attacks.rainbow_table_attack import (
+    DEFAULT_TABLE,
+    load_rainbow_table,
+    rainbow_table_attack,
+)
 from common.account_store import AccountStore
 from common.demo_target import build_demo_target
 from defenses.captcha_challenge import apply_captcha_challenge
@@ -46,9 +50,18 @@ from defenses.progressive_delay import apply_progressive_delay
 LoginFunction = Callable[[str, str], bool]
 
 ATTACK_CHOICES = ["dictionary", "mono", "poly", "rainbow_table", "parallel"]
-DEFENSE_CHOICES = ["none", "linear_delay", "progressive_delay", "counter_limit", "captcha_challenge", "logging_defense"]
+DEFENSE_CHOICES = [
+    "none",
+    "linear_delay",
+    "progressive_delay",
+    "counter_limit",
+    "captcha_challenge",
+    "logging_defense",
+]
 ATTACKS_WITHOUT_LOGIN_CALL = {"rainbow_table", "parallel"}
-POLY_DEMO_ALPHABET = "".join(dict.fromkeys(MONO_CHARSETS["lower"] + MONO_CHARSETS["digits"]))
+POLY_DEMO_ALPHABET = "".join(
+    dict.fromkeys(MONO_CHARSETS["lower"] + MONO_CHARSETS["digits"])
+)
 
 
 @dataclass
@@ -93,14 +106,18 @@ def _robot_cannot_solve_captcha(_prompt: str) -> str:
     return "ich-bin-kein-mensch"
 
 
-def build_defended_login(account_store: AccountStore, args: argparse.Namespace) -> LoginFunction:
+def build_defended_login(
+    account_store: AccountStore, args: argparse.Namespace
+) -> LoginFunction:
     """Baut login() mit der per --defense gewaehlten Verteidigung (oder ohne)."""
     if args.defense == "none":
         return account_store.login
     if args.defense == "linear_delay":
         return apply_linear_delay(account_store.login, delay_seconds=args.delay)
     if args.defense == "progressive_delay":
-        return apply_progressive_delay(account_store.login, base_delay=args.base_delay, multiplier=args.multiplier)
+        return apply_progressive_delay(
+            account_store.login, base_delay=args.base_delay, multiplier=args.multiplier
+        )
     if args.defense == "counter_limit":
         return apply_counter_limit(account_store.login, max_failures=args.max_failures)
     if args.defense == "captcha_challenge":
@@ -119,7 +136,12 @@ def build_defended_login(account_store: AccountStore, args: argparse.Namespace) 
     raise ValueError(f"Unbekannte Verteidigung: {args.defense}")
 
 
-def run_attack(login: LoginFunction, account_store: AccountStore, username: str, args: argparse.Namespace) -> DemoResult:
+def run_attack(
+    login: LoginFunction,
+    account_store: AccountStore,
+    username: str,
+    args: argparse.Namespace,
+) -> DemoResult:
     """Fuehrt den per --attack gewaehlten Angriff gegen `login` aus."""
     if args.attack == "dictionary":
         result = run_dictionary_attack(account_store, username, login_fn=login)
@@ -127,12 +149,18 @@ def run_attack(login: LoginFunction, account_store: AccountStore, username: str,
 
     if args.attack == "mono":
         start = time.perf_counter()
-        password, attempts = mono_alphabet_attack(login, username, MONO_CHARSETS[args.charset], args.max_length)
+        password, attempts = mono_alphabet_attack(
+            login, username, MONO_CHARSETS[args.charset], args.max_length
+        )
         return DemoResult(password, attempts, time.perf_counter() - start)
 
     if args.attack == "poly":
         result = run_poly_alphabet_attack(
-            account_store, username, alphabet=POLY_DEMO_ALPHABET, max_length=args.max_length, login_fn=login
+            account_store,
+            username,
+            alphabet=POLY_DEMO_ALPHABET,
+            max_length=args.max_length,
+            login_fn=login,
         )
         return DemoResult(result.password, result.attempts, result.elapsed_seconds)
 
@@ -145,39 +173,99 @@ def run_attack(login: LoginFunction, account_store: AccountStore, username: str,
     if args.attack == "parallel":
         charset = PARALLEL_CHARSETS[args.charset]
         start = time.perf_counter()
-        found, attempts = parallel_bruteforce_attack(account_store, username, charset, args.max_length, args.processes)
+        found, attempts = parallel_bruteforce_attack(
+            account_store, username, charset, args.max_length, args.processes
+        )
         return DemoResult(found, attempts, time.perf_counter() - start)
 
     raise ValueError(f"Unbekannter Angriff: {args.attack}")
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Demo: Angriff + Verteidigung kombinieren")
-    parser.add_argument("--attack", choices=ATTACK_CHOICES, default="dictionary", help="Welcher Angriff laeuft")
-    parser.add_argument("--defense", choices=DEFENSE_CHOICES, default="none", help="Welche Verteidigung davor geschaltet wird")
+    parser = argparse.ArgumentParser(
+        description="Demo: Angriff + Verteidigung kombinieren"
+    )
+    parser.add_argument(
+        "--attack",
+        choices=ATTACK_CHOICES,
+        default="dictionary",
+        help="Welcher Angriff laeuft",
+    )
+    parser.add_argument(
+        "--defense",
+        choices=DEFENSE_CHOICES,
+        default="none",
+        help="Welche Verteidigung davor geschaltet wird",
+    )
 
     # Angriffs-Parameter (nur fuer die jeweils passenden Angriffe relevant)
     parser.add_argument(
-        "--max-length", type=int, default=2,
+        "--max-length",
+        type=int,
+        default=2,
         help="Maximale Passwortlaenge fuer mono/poly/parallel (klein, damit es mit "
         "Latenz-Verteidigungen in nuetzlicher Zeit bleibt; siehe Moduldoku)",
     )
-    parser.add_argument("--charset", choices=sorted(MONO_CHARSETS), default="lower", help="Zeichensatz fuer mono/parallel")
-    parser.add_argument("--processes", type=int, default=2, help="Anzahl Prozesse fuer den parallelisierten Angriff")
+    parser.add_argument(
+        "--charset",
+        choices=sorted(MONO_CHARSETS),
+        default="lower",
+        help="Zeichensatz fuer mono/parallel",
+    )
+    parser.add_argument(
+        "--processes",
+        type=int,
+        default=2,
+        help="Anzahl Prozesse fuer den parallelisierten Angriff",
+    )
 
     # Verteidigungs-Parameter
-    parser.add_argument("--delay", type=float, default=0.05, help="linear_delay: Wartezeit je Versuch in Sekunden")
-    parser.add_argument("--base-delay", type=float, default=0.3, help="progressive_delay: Wartezeit nach dem 1. Fehlversuch")
-    parser.add_argument("--multiplier", type=float, default=2.0, help="progressive_delay: Wachstumsfaktor je Fehlversuch")
-    parser.add_argument("--max-failures", type=int, default=3, help="counter_limit: Fehlversuche bis zur Sperre")
     parser.add_argument(
-        "--failure-threshold", type=int, default=3,
+        "--delay",
+        type=float,
+        default=0.05,
+        help="linear_delay: Wartezeit je Versuch in Sekunden",
+    )
+    parser.add_argument(
+        "--base-delay",
+        type=float,
+        default=0.3,
+        help="progressive_delay: Wartezeit nach dem 1. Fehlversuch",
+    )
+    parser.add_argument(
+        "--multiplier",
+        type=float,
+        default=2.0,
+        help="progressive_delay: Wachstumsfaktor je Fehlversuch",
+    )
+    parser.add_argument(
+        "--max-failures",
+        type=int,
+        default=3,
+        help="counter_limit: Fehlversuche bis zur Sperre",
+    )
+    parser.add_argument(
+        "--failure-threshold",
+        type=int,
+        default=3,
         help="captcha_challenge/logging_defense: Fehlversuche bis Captcha bzw. Alarm",
     )
-    parser.add_argument("--window-seconds", type=int, default=60, help="logging_defense: Zeitfenster fuer den Alarm")
-    parser.add_argument("--log-file", type=type(DEFAULT_LOG_PATH), default=DEFAULT_LOG_PATH, help="logging_defense: Zieldatei")
     parser.add_argument(
-        "--demo-max-attempts", type=int, default=None,
+        "--window-seconds",
+        type=int,
+        default=60,
+        help="logging_defense: Zeitfenster fuer den Alarm",
+    )
+    parser.add_argument(
+        "--log-file",
+        type=type(DEFAULT_LOG_PATH),
+        default=DEFAULT_LOG_PATH,
+        help="logging_defense: Zieldatei",
+    )
+    parser.add_argument(
+        "--demo-max-attempts",
+        type=int,
+        default=None,
         help="Bricht die Demo nach dieser Anzahl Versuche ab. Default: automatisch "
         "8 bei progressive_delay (waechst exponentiell), sonst unbegrenzt.",
     )
@@ -225,7 +313,9 @@ def main() -> None:
             f"in {result.elapsed_seconds:.3f}s"
         )
     else:
-        print(f"Passwort nicht gefunden nach {attempts_text} Versuchen in {result.elapsed_seconds:.3f}s")
+        print(
+            f"Passwort nicht gefunden nach {attempts_text} Versuchen in {result.elapsed_seconds:.3f}s"
+        )
 
 
 if __name__ == "__main__":

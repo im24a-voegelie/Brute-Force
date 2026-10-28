@@ -13,7 +13,7 @@ import argparse
 import itertools
 import string
 import time
-from typing import Callable
+from collections.abc import Callable
 
 from common.demo_target import DEMO_PASSWORD, build_demo_target
 
@@ -46,22 +46,40 @@ def mono_alphabet_attack(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Mono-Alphabet Brute-Force-Angriff (2.1)")
-    parser.add_argument("--charset", choices=sorted(CHARSETS), default="lower", help="Zeichensatz des gesuchten Passworts")
-    parser.add_argument("--max-length", type=int, default=4, help="Maximale Passwortlaenge, die probiert wird (Vorgabe: bis 10)")
+    parser = argparse.ArgumentParser(
+        description="Mono-Alphabet Brute-Force-Angriff (2.1)"
+    )
+    parser.add_argument(
+        "--charset",
+        choices=sorted(CHARSETS),
+        default="lower",
+        help="Zeichensatz des gesuchten Passworts",
+    )
+    parser.add_argument(
+        "--max-length",
+        type=int,
+        default=4,
+        help="Maximale Passwortlaenge, die probiert wird (Vorgabe: bis 10)",
+    )
     args = parser.parse_args()
 
     charset = CHARSETS[args.charset]
     store, username = build_demo_target()
     print(f"Zeichensatz: {args.charset}, max. Laenge: {args.max_length}")
-    print(f"Ziel-Passwort (nur zur Kontrolle, normalerweise unbekannt): {DEMO_PASSWORD}")
+    print(
+        f"Ziel-Passwort (nur zur Kontrolle, normalerweise unbekannt): {DEMO_PASSWORD}"
+    )
 
     start = time.perf_counter()
-    found, attempts = mono_alphabet_attack(store.login, username, charset, args.max_length)
+    found, attempts = mono_alphabet_attack(
+        store.login, username, charset, args.max_length
+    )
     duration = time.perf_counter() - start
 
     if found is not None:
-        print(f"Passwort gefunden: '{found}' nach {attempts} Versuchen in {duration:.3f}s")
+        print(
+            f"Passwort gefunden: '{found}' nach {attempts} Versuchen in {duration:.3f}s"
+        )
     else:
         print(f"Passwort nicht gefunden nach {attempts} Versuchen in {duration:.3f}s")
 

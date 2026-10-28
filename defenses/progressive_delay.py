@@ -8,7 +8,7 @@ erfolgreicher Login setzt den Zaehler wieder auf null zurueck.
 
 import argparse
 import time
-from typing import Callable
+from collections.abc import Callable
 
 from common.demo_target import DEMO_PASSWORD, build_demo_target
 
@@ -39,24 +39,45 @@ def apply_progressive_delay(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Demo: Zunehmende Latenzzeit (3.1b)")
-    parser.add_argument("--base-delay", type=float, default=10.0, help="Wartezeit nach dem ersten Fehlversuch in Sekunden")
-    parser.add_argument("--multiplier", type=float, default=6.0, help="Faktor, um den die Wartezeit je weiterem Fehlversuch waechst")
-    parser.add_argument("--attempts", type=int, default=1, help="Anzahl simulierter Fehlversuche vor dem korrekten Passwort")
+    parser.add_argument(
+        "--base-delay",
+        type=float,
+        default=10.0,
+        help="Wartezeit nach dem ersten Fehlversuch in Sekunden",
+    )
+    parser.add_argument(
+        "--multiplier",
+        type=float,
+        default=6.0,
+        help="Faktor, um den die Wartezeit je weiterem Fehlversuch waechst",
+    )
+    parser.add_argument(
+        "--attempts",
+        type=int,
+        default=1,
+        help="Anzahl simulierter Fehlversuche vor dem korrekten Passwort",
+    )
     args = parser.parse_args()
 
     store, username = build_demo_target()
-    protected_login = apply_progressive_delay(store.login, args.base_delay, args.multiplier)
+    protected_login = apply_progressive_delay(
+        store.login, args.base_delay, args.multiplier
+    )
 
     for attempt in range(1, args.attempts + 1):
         start = time.perf_counter()
         success = protected_login(username, "falsches-passwort")
         duration = time.perf_counter() - start
-        print(f"Versuch {attempt}: erfolgreich={success}, Wartezeit davor={duration:.2f}s")
+        print(
+            f"Versuch {attempt}: erfolgreich={success}, Wartezeit davor={duration:.2f}s"
+        )
 
     start = time.perf_counter()
     success = protected_login(username, DEMO_PASSWORD)
     duration = time.perf_counter() - start
-    print(f"Versuch mit korrektem Passwort: erfolgreich={success}, Wartezeit davor={duration:.2f}s")
+    print(
+        f"Versuch mit korrektem Passwort: erfolgreich={success}, Wartezeit davor={duration:.2f}s"
+    )
 
 
 if __name__ == "__main__":

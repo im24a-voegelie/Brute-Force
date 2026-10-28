@@ -50,15 +50,21 @@ def main() -> None:
         description="Rainbow-Table fuer den Demo-Passwortraum vorberechnen (2.3a)"
     )
     parser.add_argument(
-        "--charset", choices=sorted(CHARSETS), default="lower",
+        "--charset",
+        choices=sorted(CHARSETS),
+        default="lower",
         help="Zeichensatz der vorberechneten Passwoerter",
     )
     parser.add_argument(
-        "--max-length", type=int, default=4,
+        "--max-length",
+        type=int,
+        default=4,
         help="Maximale Passwortlaenge, die vorberechnet wird",
     )
     parser.add_argument(
-        "--output", type=Path, default=DEFAULT_OUTPUT,
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT,
         help="Zieldatei fuer die Lookup-Tabelle",
     )
     args = parser.parse_args()
