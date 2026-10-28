@@ -13,8 +13,7 @@ es alle in nuetzlicher Demo-Zeit finden koennen.
 from common.account_store import AccountStore
 
 DEMO_USERNAME = "demo_user"
-DEMO_PASSWORD = "Gtm0"
-
+DEMO_PASSWORD = "hans"
 
 def build_demo_target() -> tuple[AccountStore, str]:
     """Baut den AccountStore mit dem Demo-User und gibt (store, username) zurueck."""
