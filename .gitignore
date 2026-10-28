@@ -18,3 +18,6 @@ Thumbs.db
 
 # Generierte Rainbow-Table (gross, wird per scripts/build_rainbow_table.py erzeugt)
 data/rainbow_table.csv
+
+# Protokoll von defenses/logging_defense.py
+logs/

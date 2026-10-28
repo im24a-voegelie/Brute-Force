@@ -1,15 +1,22 @@
-"""Poly-Alphabet-Angriff gegen das simulierte lokale Login-System."""
+"""Poly-Alphabet-Angriff gegen das simulierte lokale Login-System.
+
+Die Vorgabe erlaubt bis zu 10 Zeichen aus Grossbuchstaben, Kleinbuchstaben,
+Ziffern und Sonderzeichen kombiniert. Der Demo-Default ist bewusst kleiner
+(Klein­buchstaben + Ziffern, Laenge 4), damit ein Lauf ohne Argumente in
+nuetzlicher Zeit durchlaeuft; mit --alphabet/--max-length laesst sich der
+volle Suchraum testen.
+"""
 
 from collections.abc import Callable
 from dataclasses import dataclass
 from itertools import product
-from string import ascii_lowercase, ascii_uppercase, digits, punctuation
+from string import ascii_lowercase, digits
 from time import perf_counter
 
 from common.account_store import AccountStore
 from common.demo_target import build_demo_target
 
-DEFAULT_ALPHABET = ascii_uppercase + ascii_lowercase + digits + punctuation
+DEFAULT_ALPHABET = ascii_lowercase + digits
 
 
 @dataclass(frozen=True)
@@ -25,7 +32,7 @@ def run_poly_alphabet_attack(
     account_store: AccountStore,
     username: str,
     alphabet: str = DEFAULT_ALPHABET,
-    max_length: int = 7,
+    max_length: int = 4,
     login_fn: Callable[[str, str], bool] | None = None,
 ) -> AttackResult:
     """Prüft Kombinationen aus sichtbaren ASCII-Buchstaben, Ziffern und Satzzeichen."""
